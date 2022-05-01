@@ -1,0 +1,16 @@
+---
+## Default Logstash configuration from logstash-docker.
+## from https://github.com/elastic/logstash-docker/blob/master/build/logstash/config/logstash-oss.yml
+#
+http.host: "0.0.0.0"
+path.config: /usr/share/logstash/pipeline
+# Set to false to disable X-Pack graph features.
+xpack.graph.enabled: false
+#Set to false to disable X-Pack machine learning features.
+xpack.ml.enabled: false
+#Set to false to disable X-Pack monitoring features.
+xpack.monitoring.enabled: true
+#Set to false to disable X-Pack security features.
+xpack.security.enabled: false
+#Set to false to disable Watcher.
+xpack.watcher.enabled: false

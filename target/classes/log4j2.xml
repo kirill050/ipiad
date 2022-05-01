@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" packages="org.erc.log4j2.layout">
+    <properties>
+        <property name="name">Robot_Parser</property>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5.5p | %-10.10t | %-20.20C:%-5.5L | %msg%n</property>
+        <property name="logdir">D:\Kirill\VUZ\8_Semestr\IPiAD\Robot_Parser\log\</property>
+        <!--
+        It will look like that:
+        2013-04-03 07:37:51.993 | WARN  | main       | lnetgateway.Server:56    | My app is logging stuff
+        -->
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %c{1}: %m%n"/>
+        </Console>
+        <RollingFile name="DATAFile" fileName="${logdir}${date:yyyy-MM-dd}_DATA.log"
+                     filePattern="${logdir}%d{yyyy-MM-dd}_DATA.log">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy /><!-- Rotated everyday -->
+            </Policies>
+            <filters>
+                <LevelRangeFilter minLevel="fatal" maxLevel="info" onMatch="ACCEPT" onMismatch="DENY" />
+            </filters>
+        </RollingFile>
+        <RollingFile name="ErrorFile" fileName="${logdir}${date:yyyy-MM-dd}_error.log"
+                     filePattern="${logdir}%d{yyyy-MM-dd}_error.log">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy /><!-- Rotated everyday -->
+            </Policies>
+            <filters>
+                <LevelRangeFilter minLevel="fatal" maxLevel="error" onMatch="ACCEPT" onMismatch="DENY" />
+            </filters>
+        </RollingFile>
+        <RollingFile name="WarnFile" fileName="${logdir}${date:yyyy-MM-dd}_warn.log"
+                     filePattern="${logdir}%d{yyyy-MM-dd}_warn.log">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy /><!-- Rotated everyday -->
+            </Policies>
+            <filters>
+                <LevelRangeFilter minLevel="warn" maxLevel="warn" onMatch="ACCEPT" onMismatch="DENY" />
+            </filters>
+        </RollingFile>
+        <RollingFile name="AllFile" fileName="${logdir}${date:yyyy-MM-dd}_all.log"
+                     filePattern="${logdir}%d{yyyy-MM-dd}_all.log">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy /><!-- Rotated everyday -->
+            </Policies>
+            <filters>
+                <LevelRangeFilter minLevel="fatal" maxLevel="info" onMatch="ACCEPT" onMismatch="DENY" />
+            </filters>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!--<Logger name="kafka" level="ERROR"/>
+        <Logger name="org.apache" level="ERROR"/>
+        <Logger name="socks" level="FATAL"/>
+        <Logger name="org.elasticsearch.plugins" level="WARN"/>
+		-->
+        <Root level="info">
+            <AppenderRef ref="Console" level="debug"/>
+            <AppenderRef ref="ErrorFile" level="error"/> <!-- And to a rotated file -->
+            <AppenderRef ref="WarnFile" level="warn"/>
+            <AppenderRef ref="AllFile" level="debug"/>
+            <AppenderRef ref="DATAFile" level="info"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.elasticsearch.client:transport:7.9.3'
+    implementation 'joda-time:joda-time:2.10.14'
+    implementation 'org.joda:joda-convert:2.2.2'
+    implementation 'com.typesafe:config:1.4.2'
+}
+
+test {
+    useJUnitPlatform()
+}
