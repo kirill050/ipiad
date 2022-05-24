@@ -35,8 +35,6 @@ public class Downloader extends Thread  {
     private int retryDelay = 5 * 1000;
     private int retryCount = 2;
     private int metadataTimeout = 30*1000;
-    private int Parsing_Queue_size;
-
 
     private Channel channel;
     String exchangeName;
@@ -82,7 +80,7 @@ public class Downloader extends Thread  {
     private int push_to_download_queue(String text_link, int doc_type, int depth) throws IOException {
         if (depth < MAX_DEPTH) {
             info_for_download temp = new info_for_download(text_link, doc_type, (depth+1));
-            //byte[] messageBodyBytes =  temp.toString().getBytes();
+
             byte[] messageBodyBytes = JSON.toJSONString(temp).getBytes();
             channel.basicPublish(exchangeName, routingKey_dwnl
                     ,MessageProperties.PERSISTENT_TEXT_PLAIN, messageBodyBytes);
@@ -103,7 +101,6 @@ public class Downloader extends Thread  {
         info_for_download url_struct;
 
         url_struct = JSON.parseObject(message.getBytes(), info_for_download.class);
-        //log.info("Got url to download = " + url_struct.url);
         channel.basicAck(tag, false);
         if (url_struct.url == null){
             return 0;
@@ -114,7 +111,6 @@ public class Downloader extends Thread  {
         boolean bStop = false;
         Document doc = null;
         for (int iTry = 0; iTry < retryCount && !bStop; iTry++) {
-            //log.debug("getting page from url " + url_struct.url);
             RequestConfig requestConfig = RequestConfig.custom()
                     .setSocketTimeout(metadataTimeout)
                     .setConnectTimeout(metadataTimeout)
@@ -135,15 +131,13 @@ public class Downloader extends Thread  {
                     if (entity != null) {
                         try {
                             doc = Jsoup.parse(entity.getContent(), "UTF-8", server);
-                            //log.debug("Downloaded new document by " + Thread.currentThread().getName());
                             break;
                         } catch (IOException e) {
                             log.error(e);
                         }
                     }
-                    bStop = true;//break;
+                    bStop = true;
                 } else {
-                    //if (code == 403) {
                     log.warn("error get url " + url_struct.url + " code " + code);
                     response.close();
                     response = null;
@@ -181,7 +175,6 @@ public class Downloader extends Thread  {
         info_for_parse document_struct;
 
         document_struct = new info_for_parse(doc, doc_type, link, depth);
-        //log.info("Got link to parse = " + document_struct.link);
         if (document_struct.link == null){
             return 0;
         } else if (document_struct.doc == null){
@@ -192,36 +185,20 @@ public class Downloader extends Thread  {
 
         //Parse page
         if (document_struct.doc_type == 0) { //main page with list of news
-            Elements news = document_struct.doc.getElementsByClass("post-blog-list");//.select(".news-item");
+            Elements news = document_struct.doc.getElementsByClass("post-blog-list");
             for (Element element : news) {
                 try {
                     Element etitle = element.child(0);
                     String text_link = etitle.child(1).child(0).child(0).child(0).attr("href");
 
                     push_to_download_queue(text_link, 1, document_struct.depth);
-                    log.info("Next news from main page: " + text_link + "\n");// + about_link);
+                    log.info("Next news from main page: " + text_link + "\n");
 
                 } catch (Exception e) {
                     log.error(e);
                 }
 
             }
-
-//            Elements news_next_page = document_struct.doc.getElementsByClass("navigations");
-//            for (Element element : news_next_page) {
-//                try {
-//                    String text_link = "";
-//                    for (Element tag : element.child(1).getElementsByTag("a")){
-//                        text_link = tag.attr("href");
-//                    }
-//                    log.info("Next main page " + text_link + "\n");
-//                    push_to_download_queue(text_link, 0, document_struct.depth);
-//                } catch (Exception e) {
-//                    log.error(e);
-//                }
-//
-//            }
-
 
             return 1;
         } else { // page with news
@@ -259,11 +236,6 @@ public class Downloader extends Thread  {
                 break;
             }
 
-            /*log.info("Page news" + "\n" + "topic: " + topic + "\n"
-                    + "Date: " + date + "\n"
-                    + "Author: " + author + "\n"
-                    + "URL: " + document_struct.link + "\n"
-                    + "Filling: " + filling);*/
             push_to_elastic_queue(new info_for_elastic(document_struct.link, topic, date, author, filling, 0));
 
             for (Element element : news) { //geting new links
@@ -272,10 +244,9 @@ public class Downloader extends Thread  {
 
                     for (Element news_at_same_topic : other_news_at_same_topic) {
                         String text_link = news_at_same_topic.child(0).child(0).attr("href");
-//                        String about_link = news_at_same_topic.child(0).child(0).text();
 
                         push_to_download_queue(text_link, 1, document_struct.depth);
-                        log.info("Next news from news page: " + text_link + "\n");// + about_link);
+                        log.info("Next news from news page: " + text_link + "\n");
                     }
                     break;
                 } catch (Exception e) {
@@ -292,10 +263,9 @@ public class Downloader extends Thread  {
     public void run() {
         try {
             getUrl();
-            //channel.basicAck(tag, false);
         } catch (IOException e) {
             e.printStackTrace();
-            log.info("we are fucked!!!");
+            log.info("All`s over, Anakin...!!!");
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }

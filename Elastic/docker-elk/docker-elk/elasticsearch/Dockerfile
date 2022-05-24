@@ -10,3 +10,6 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
 
 RUN echo elasticsearch-plugin install --batch \
   https://github.com/anti-social/jmorphy2/releases/download/v0.2.2-es${ES_VERSION}/analysis-jmorphy2-0.2.2-es${ELK_VERSION}.zip
+
+RUN echo elasticsearch-plugin install --batch \
+  org.codelibs:elasticsearch-minhash:7.14.0

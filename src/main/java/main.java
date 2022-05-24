@@ -27,7 +27,7 @@ public class main {
     static String exchangeName = "Exchange_btw_threads";
     static String routingKey_elastic = "Route_to_elastic";
     static int threads_number = 5;
-    static int MAX_DEPTH = 3;
+    static int MAX_DEPTH = 10;
 
     static void put_to_q_other_main_pages(Channel channel) throws IOException {
         //https://voicesevas.ru/page/3/
@@ -67,12 +67,12 @@ public class main {
 
 
         int back_count = 100;
-        while(downloaderThread.isAlive() && esTalker_Thread.isAlive()){// || parserThread.isAlive()){
+        while(downloaderThread.isAlive() && esTalker_Thread.isAlive()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
             }
-            if (!downloaderThread.isAlive()){// && !parserThread.isAlive()){
+            if (!downloaderThread.isAlive()){
                 break;
             }
             if (back_count == 0){
@@ -94,7 +94,7 @@ public class main {
     }
 
     static void just_working_with_queries(Channel channel, String exchangeName, Scanner console) throws IOException {
-        System.out.println("What query you want to do? 0 -- quit; 1 -- author query 2 -- date query \" +\n" +
+        System.out.println("What query you want to do? 0 -- quit; 1 -- author query 2 -- Get_duplicates \" +\n" +
                 "                    \"3 -- topic query 4 -- url query 5 -- aggregation query 6 -- print all");
         //to check the DB filling
         int answer = 0;
@@ -128,7 +128,7 @@ public class main {
                     send_to_Elastic_talker(channel, "Query", "K", "K",
                             "K", "K", answer);
             }
-            System.out.println("What query you want to do? 0 -- quit; 1 -- author query 2 -- date query " +
+            System.out.println("What query you want to do? 0 -- quit; 1 -- author query 2 -- Get_duplicates " +
                     "3 -- topic query 4 -- url query 5 -- aggregation query 6 -- print all");
             answer = console.nextInt();
         }

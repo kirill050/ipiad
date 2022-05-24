@@ -3,7 +3,7 @@
     <properties>
         <property name="name">Robot_Parser</property>
         <property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5.5p | %-10.10t | %-20.20C:%-5.5L | %msg%n</property>
-        <property name="logdir">D:\Kirill\VUZ\8_Semestr\IPiAD\Robot_Parser\log\</property>
+        <property name="logdir">D:\Kirill\VUZ\8_Semestr\IPiAD\log\</property>
         <!--
         It will look like that:
         2013-04-03 07:37:51.993 | WARN  | main       | lnetgateway.Server:56    | My app is logging stuff
